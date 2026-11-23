@@ -50,6 +50,19 @@
     figure, .phones figure, table, .flow { page-break-inside: avoid; }
     .cover { padding-top: 120px; }
   }
+  /* Contents: stays in view in the left margin on wide screens */
+  html { scroll-behavior: smooth; }
+  h2[id], h3[id] { scroll-margin-top: 16px; }
+  .toc ol ol { margin: 2px 0 4px; padding-left: 18px; font-size: 13px; list-style: none; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .toc a.on { color: var(--brown); font-weight: 700; }
+  @media screen and (min-width: 1240px) {
+    main { margin-left: max(300px, calc(50% - 490px)); margin-right: auto; }
+    .toc { position: fixed; top: 20px; left: max(16px, calc(50% - 490px - 284px)); width: 264px;
+           max-height: calc(100vh - 40px); overflow-y: auto; margin: 0; padding: 14px 16px; font-size: 14px; z-index: 10; }
+    .toc > ol { padding-left: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -62,7 +75,7 @@
   <p class="muted">Documentation and user guide &mdash; November 2026</p>
 </section>
 
-<div class="toc">
+<nav class="toc" aria-label="Contents">
   <b>Contents</b>
   <ol>
     <li><a href="#story">Background: why these apps exist</a></li>
@@ -70,11 +83,18 @@
     <li><a href="#gwentone">gwenTone (Pyesa Scanner) and Moshi</a></li>
     <li><a href="#renderer">Voice Renderer</a></li>
     <li><a href="#sbe">Ark2 Chorus SBE (the members' player)</a></li>
-    <li><a href="#roles">Tasks involved: detailed workflows</a></li>
+    <li><a href="#roles">Tasks involved: detailed workflows</a>
+      <ol>
+        <li><a href="#task1">Task 1. Scanning and editing</a></li>
+        <li><a href="#task2">Task 2. Rendering</a></li>
+        <li><a href="#task3">Task 3. Accounts (Profile Manager)</a></li>
+        <li><a href="#task4">Task 4. Final output: Ark2 SBE</a></li>
+      </ol>
+    </li>
     <li><a href="#next">SBE Community</a></li>
     <li><a href="#glossary">Glossary</a></li>
   </ol>
-</div>
+</nav>
 
 <!-- ================================================================ -->
 <h2 id="story">1. Background: why these apps exist</h2>
@@ -608,5 +628,19 @@ and only shows there while an admin has it turned on.</p>
 <p class="muted" style="margin-top:40px; text-align:center">Ark2 Chorus &middot; Mandaue City Central SDA Church (Maguikay) &middot; In memory of Gwen &amp; Tony Jayme</p>
 
 </main>
+<script>
+// Highlight the section being read in the Contents
+(function () {
+  var links = [].slice.call(document.querySelectorAll('.toc a[href^="#"]'));
+  var heads = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  function mark() {
+    var cur = 0;
+    heads.forEach(function (h, i) { if (h && h.getBoundingClientRect().top < 120) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
+  }
+  window.addEventListener('scroll', mark, { passive: true });
+  mark();
+})();
+</script>
 </body>
 </html>
