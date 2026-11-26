@@ -25,6 +25,11 @@
   .phones { display:flex; flex-wrap:wrap; gap: 18px; }
   .phones figure { width: 220px; margin: 8px 0 18px; }
   .phones img { width: 220px; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .menu-shot { display:flex; gap: 24px; align-items:flex-start; }
+  .menu-shot figure { flex: none; width: 230px; margin-top: 12px; }
+  .menu-shot table { flex: 1; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } .menu-shot { display:block; } }
   .note { background:#fff6e5; border-left: 4px solid #e0a020; padding: 10px 14px; border-radius: 4px; margin: 14px 0; }
   .tip { background:#eaf4ee; border-left: 4px solid var(--green); padding: 10px 14px; border-radius: 4px; margin: 14px 0; }
   table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; font-size: 14px; }
@@ -56,7 +61,14 @@
   .toc ol ol { margin: 2px 0 4px; padding-left: 18px; font-size: 13px; list-style: none; }
   .toc a { color: var(--blue); text-decoration: none; }
   .toc a:hover { text-decoration: underline; }
-  .toc a.on { color: var(--brown); font-weight: 700; }
+  /* The section being read: a soft honey tag with stitched edges, pointing at the page */
+  .toc a { display: inline-block; vertical-align: top; position: relative; padding: 3px 26px 3px 9px; margin: 1px 0 1px -3px;
+           border-radius: 4px 0 0 4px; transition: background-color .25s, color .25s; }
+  .toc a.on { color: #4f3612; font-weight: 700; background: #ecd08f; text-decoration: none;
+              clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%); }
+  .toc a.on::before { content: ''; position: absolute; top: 3px; bottom: 3px; left: 3px; right: 17px; pointer-events: none;
+                      border: 1.5px dashed rgba(255,255,255,.9); border-right: 0; border-radius: 3px 0 0 3px; }
+  @media print { .toc a.on { color: var(--blue); font-weight: 400; background: none; clip-path: none; } .toc a.on::before { display: none; } }
   @media screen and (min-width: 1240px) {
     main { margin-left: max(300px, calc(50% - 490px)); margin-right: auto; }
     .toc { position: fixed; top: 20px; left: max(16px, calc(50% - 490px - 284px)); width: 264px;
@@ -83,12 +95,14 @@
     <li><a href="#gwentone">gwenTone (Pyesa Scanner) and Moshi</a></li>
     <li><a href="#renderer">Voice Renderer</a></li>
     <li><a href="#sbe">Ark2 Chorus SBE (the members' player)</a></li>
+    <li><a href="#pm">Profile Manager (web): accounts, files, settings</a></li>
     <li><a href="#roles">Tasks involved: detailed workflows</a>
       <ol>
         <li><a href="#task1">Task 1. Scanning and editing</a></li>
         <li><a href="#task2">Task 2. Rendering</a></li>
         <li><a href="#task3">Task 3. Accounts (Profile Manager)</a></li>
         <li><a href="#task4">Task 4. Final output: Ark2 SBE</a></li>
+        <li><a href="#task5">Task 5. Emails: sign-up, activation and PINs</a></li>
       </ol>
     </li>
     <li><a href="#next">SBE Community</a></li>
@@ -144,6 +158,7 @@ their own part and learn it by ear, at any time, without waiting for the trainer
   <tr><td><b>gwenTone</b></td><td>Ark2 encoder / admin</td><td>Windows PC, opened in the browser (local server)</td><td>A clean, checked score: <code>.musicxml</code> / <code>.mxl</code></td></tr>
   <tr><td><b>Voice Renderer</b></td><td>Ark2 encoder / admin</td><td>Windows PC, opened in the browser at <code>http://localhost:9990/</code>; can use a free Kaggle GPU</td><td>One sung audio file per voice part, the protected score (<code>.ark2s</code>) and renders (<code>.ark2a</code>), uploaded to the Online Drive; member accounts (PINs)</td></tr>
   <tr><td><b>Ark2 Chorus SBE</b></td><td>Every choir member</td><td>Any phone (Android or iPhone), installed from <code>https://ark2chorus.pages.dev/</code></td><td>Practice: notes scrolling with the music, per-voice mixer, lyrics, rendered voices, offline use</td></tr>
+  <tr><td><b>Profile Manager (web)</b></td><td>Ark2 admins, and helpers with a Regular login</td><td>Any browser or phone, at <code>https://ark2sbe-profile.pages.dev</code> (installs as an app)</td><td>Accounts and PINs, sign-up activation, uploads and archive, Community moderation, emails and every online setting; changes are live at once</td></tr>
 </table>
 
 <!-- ================================================================ -->
@@ -424,19 +439,175 @@ pick <b>Rendered</b> in the SBE player, while the notes move along with them.</p
   <tr><td>Online Drive is empty or missing</td><td>Tap the connection mark (top right). Connect to the internet and try again.</td></tr>
   <tr><td>Song has no green &#127897;&#65039;</td><td>It is not rendered yet. Ask Ark2 (&#128222;) to run it through the Voice Renderer.</td></tr>
   <tr><td>Rendered voice won't play</td><td>Download the song first, then choose Rendered once while online.</td></tr>
-  <tr><td>Asked for the PIN again</td><td>It expired or was changed. Ask Ark2 for a new one (made in Profile Manager).</td></tr>
+  <tr><td>Asked for the PIN again</td><td>The PIN changed. A new PIN is emailed by itself a few days before the old one ends: check the email (and Spam) for <i>Your new Ark2 Chorus PIN</i>. No email? Ask Ark2 (&#128222;); see <a href="#task5">Task 5</a>.</td></tr>
+  <tr><td>&ldquo;Install the app&rdquo; screen after the PIN</td><td>The PIN was typed in a browser tab. Install the app (5.1) and open it from the Home screen.</td></tr>
   <tr><td>App opens in the browser</td><td>Open <b>Ark2 Chorus</b> from the Home screen.</td></tr>
 </table>
 
 <!-- ================================================================ -->
-<h2 id="roles">6. Tasks involved</h2>
-<p>Getting one song from paper to the members' phones takes four tasks, done in this order. The table is the summary; each task's detailed workflow follows below.</p>
+<h2 id="pm" class="pb">6. Profile Manager (web)</h2>
+
+<p>The <b>Ark2SBE Profile Manager</b> is the admin website for everything online: accounts and PINs, new sign-ups, files on R2, the
+SBE Community, the emails and the app's settings. It is the Voice Renderer's Profile Manager tab as a website, usable from any
+phone or browser, at <b><code>https://ark2sbe-profile.pages.dev</code></b>.</p>
+<ul>
+  <li><b>Live at once.</b> It works on the master <code>config.ark2</code> on R2, the copy the phones read. There is no Publish step; phones see changes within a minute (settings within 30 seconds).</li>
+  <li><b>Backed up.</b> Every change to accounts first copies the config to <code>_private/config-history/</code> on R2, so a mistake can be put back (<code>node tools\r2\r2.mjs config-push &lt;file&gt;</code>).</li>
+  <li><b>The PC stays in step.</b> The Voice Renderer's Profile Manager tab brings the web changes into the PC's <code>config.ark2</code> when it opens. If the same line was changed in both places, it stops and says so: fix that line by hand.</li>
+  <li><b>Install it on a phone:</b> Android Chrome &rarr; &#8942; &rarr; <b>Install app</b>; iPhone Safari &rarr; Share &rarr; <b>Add to Home Screen</b>.</li>
+</ul>
+
+<h3 id="pm-signin">6.1 Sign in, password and two-step sign-in</h3>
+<ol class="steps">
+  <li><b>Get a login.</b> An Admin adds one in <b>Settings &rsaquo; Admin Access &rsaquo; Add login</b> (name, type, <i>Require 2FA</i>), or on the PC with <code>node manager-user.mjs add &lt;name&gt; Admin|Regular</code> in <code>tools\profile-manager</code>. A new login starts with the password <code>1234567890</code>.</li>
+  <li><b>First sign-in.</b> Type the <b>User name</b> and <b>Password</b>. With the default password, the page asks you to <b>Change your password</b> (at least 10 characters) before anything else.</li>
+  <li><b>Two-step sign-in (2FA).</b> Install Google Authenticator or Microsoft Authenticator. Tap <b>Turn on 2FA</b> (top bar), type your password again, <b>Show my QR code</b>, scan it in the authenticator (+ &rarr; Scan a QR code), and type the 6-digit code. From then on every sign-in also asks for the code. The admins get an email each time someone turns 2FA on.</li>
+  <li><b>Alerts.</b> Tap the bell (<b>Alerts</b>) on each phone or PC that should be told about new sign-ups, Community posts to check, and Spending guard warnings, and allow notifications. On iPhone this works only from the installed site.</li>
+  <li><b>Sign out</b> when done. A sign-in lasts 12 hours or until the tab is closed. Five wrong passwords lock that address for 15 minutes.</li>
+</ol>
+<div class="note"><b>Lost phone with the authenticator:</b> an Admin opens <b>Admin Access</b> and presses <b>New phone</b> on that login (or runs <code>node manager-user.mjs 2fa &lt;name&gt;</code> on the PC); the person scans a new QR code at the next sign-in. <b>Forgotten password:</b> <b>Reset to default password</b> in Admin Access.</div>
+
+<h3 id="pm-menu">6.2 The menu</h3>
+<p>The menu (left on a laptop; the first screen on a phone) has four groups. A <b>Regular</b> login sees only the pages ticked for it.</p>
+<div class="menu-shot">
+<figure>
+  <img src="screenshots/profile-manager/pm-00-menu.png" alt="The menu, as an Admin sees it.">
+  <figcaption>The menu, as an Admin sees it.</figcaption>
+</figure>
+<table>
+  <tr><th style="width:17%">Group</th><th style="width:20%">Page</th><th>What it is for</th></tr>
+  <tr><td rowspan="6"><b>Profiles</b></td><td>New profile</td><td>Make an account with its PIN, expiry and folders, and email the PIN.</td></tr>
+  <tr><td>Accounts</td><td>Every account: PINs, end date, folders, devices, photo; <b>Pending activation</b> sign-ups; delete.</td></tr>
+  <tr><td>Notifications</td><td>Messages shown in the app (pop-up, banner, phone alert).</td></tr>
+  <tr><td>File types</td><td>Which file types each tab of the app opens.</td></tr>
+  <tr><td>Sign-up</td><td>Open or close <b>Create account</b> in the app, and its limits.</td></tr>
+  <tr><td>Profile Default</td><td>What a new account starts with; the Activate pop-up; the Welcome screen.</td></tr>
+  <tr><td rowspan="4"><b>File Manager</b></td><td>Upload</td><td>Put files straight into an R2 folder.</td></tr>
+  <tr><td>Archive</td><td>Move rendered songs from R2 to Google Drive to free space.</td></tr>
+  <tr><td>Restore</td><td>Bring archived songs back from Google Drive to R2.</td></tr>
+  <tr><td>Auto-archive</td><td>Archive old songs by itself every 5 days.</td></tr>
+  <tr><td rowspan="2"><b>SBE Community</b></td><td>Posts &amp; review</td><td>Needs a look, newest posts and replies, members (<a href="#community">8.1</a>).</td></tr>
+  <tr><td>Community settings</td><td>Turn the Community on, its checks and limits (<a href="#community">8.1</a>).</td></tr>
+  <tr><td rowspan="7"><b>Settings</b></td><td>Emails</td><td>The text of every email Ark2 sends (<a href="#task5">Task 5</a>).</td></tr>
+  <tr><td>App Themes</td><td>Dark, Light or the phone's setting, for the app and the Community wall; the Community header colour.</td></tr>
+  <tr><td>Devices</td><td>How many phones one PIN works on, and the install rules.</td></tr>
+  <tr><td>Group Rehearsal</td><td>The voice-part call rooms: on/off, video or audio, time and size limits.</td></tr>
+  <tr><td>Spending guard</td><td>Keeps R2 and calls inside Cloudflare's free amount.</td></tr>
+  <tr><td>Statistics</td><td>Storage, operations and call data used this month, and who uses the most.</td></tr>
+  <tr><td>Admin Access</td><td>Logins: add, type, password reset, 2FA, delete (Admins only).</td></tr>
+</table>
+</div>
+<p>Pages with settings have a <b>Save</b> bar at the bottom: nothing counts until you press it (<i>Saved online and working within 30 seconds</i>). Tap any dotted word to see what it does.</p>
+
+<h3 id="pm-profiles">6.3 Profiles: accounts and PINs</h3>
+<p><b>New profile</b> (an account made by you, not from a sign-up)</p>
+<ol class="steps">
+  <li><b>Profile.</b> Type the <b>Name</b> and <b>Email</b>; press <b>New PIN</b> for a random PIN, or type one.</li>
+  <li><b>Expiry.</b> Years / Months / Days / Hours / Minutes; keep <b>Start the clock now</b> ticked. <b>Never expires</b> makes an admin (all folders and Settings) and shows only if Profile Default allows it.</li>
+  <li><b>Folders this PIN opens.</b> Pick the <b>Account</b> it belongs to (when <i>Link account filter</i> is on), tick its folders, and keep <b>Include Bundle</b> ticked for the common songs. Tick where it may browse: <b>Note Player</b>, <b>Audio Player</b>, <b>Music Sheet</b>.</li>
+  <li><b>Check, then create.</b> Tick <b>Make its own R2 folders</b> (Audio, Music Notes, Rendered, Sheet) for its own songs, keep <b>Email the PIN</b> ticked, read the <i>Exact lines for config.ark2</i>, and press <b>Create</b>. The PIN works at once; the person gets the First PIN email. If the email failed, press <b>Email the PIN</b>. <b>Create another</b> clears the form.</li>
+</ol>
+<figure>
+  <img src="screenshots/profile-manager/pm-new.png" alt="Profiles &rsaquo; New profile">
+  <figcaption>Profiles &rsaquo; New profile: the account, its expiry and folders, and the preview of what Create will write.</figcaption>
+</figure>
+
+<p><b>Accounts</b></p>
+<ul>
+  <li><b>Pending activation</b> (top): sign-ups from the app. <b>Activate</b> or <b>Dismiss</b> them as in <a href="#task5">Task 5</a>.</li>
+  <li><b>Open an account</b> to see its PINs, end date, last use and folder links. The pencil &#9998; adds or removes folders (backed up first; phones see it at once).</li>
+  <li><b>Devices:</b> the phones using its PIN. <b>Remove</b> frees a place; <b>Limit for this account</b> overrides <i>Devices per PIN</i> for it (0 = no limit, empty = the default).</li>
+  <li><b>Photo:</b> <b>Add / Change photo</b>, <b>Remove</b>, or <b>Let the phone change it again</b> (a phone may change its own photo once).</li>
+  <li><b>Delete account:</b> <b>Account only</b> removes its user and PIN lines and its Community posts; its folders and files stay and the config can be put back. <b>Everything</b> (type the name to confirm) also deletes its own folders and every file in them, forever. Shared folders (Bundle, Accompaniment&hellip;) are never deleted.</li>
+</ul>
+<figure>
+  <img src="screenshots/profile-manager/pm-acc-open.png" alt="Profiles &rsaquo; Accounts, one account opened">
+  <figcaption>Profiles &rsaquo; Accounts, one account opened: photo, device limit, players and its folders (pencil &#9998; to change them). PINs are hidden here.</figcaption>
+</figure>
+
+<p><b>Notifications</b>: press <b>New message</b>, choose the <b>Type</b> (Info, Success, Warning, Urgent), write it, tick <b>Pop-up after the entrance screen</b> and/or <b>Banner at the bottom of the home page</b>, set <b>Valid from / until</b> (Philippine time, both days included) and <b>Show to</b> all or chosen accounts, then <b>Save</b>. It is also sent once as a phone alert on its first day. Editing a message makes it pop up again.</p>
+<div class="grid2">
+<figure>
+  <img src="screenshots/profile-manager/pm-note.png" alt="Profiles &rsaquo; Notifications.">
+  <figcaption>Profiles &rsaquo; Notifications.</figcaption>
+</figure>
+<figure>
+  <img src="screenshots/profile-manager/pm-ftypes.png" alt="Profiles &rsaquo; File types.">
+  <figcaption>Profiles &rsaquo; File types.</figcaption>
+</figure>
+</div>
+<p><b>File types</b>: click a type to turn it on or off for each tab of the app (&#128274; <code>.ark2s</code> / <code>.ark2a</code> are the protected files), then <b>Save</b>. Upload only takes the types turned on here. Phones get the change within a minute.</p>
+<p><b>Sign-up</b>: <b>Sign-up open</b> shows <b>Create account</b> on the app's PIN screen. Limits: <b>One sign-up per device</b>, <b>One per email address</b> (both for good), <b>Per connection a day</b> (many people share the church Wi-Fi), <b>A day in all</b> (keep it well below Gmail's ~100 emails a day), <b>Waiting at once</b>, and <b>Remove a pending request after</b> N days.</p>
+<figure>
+  <img src="screenshots/profile-manager/pm-signup.png" alt="Profiles &rsaquo; Sign-up">
+  <figcaption>Profiles &rsaquo; Sign-up: the limits for Create account in the app.</figcaption>
+</figure>
+
+<p><b>Profile Default</b>: what New profile and the Activate pop-up start with (expiry, folders, players, own R2 folders, Email the PIN, <i>Include Bundle</i>, <i>Link account filter</i>, <i>Show &ldquo;Never expires&rdquo;</i>). <b>Don't offer the folders of</b> hides chosen profiles' song folders from the Activate pop-up so a new member isn't given them by mistake. <b>Welcome screen</b>: a greeting (title, text, button; <code>{name}</code>) shown once on each phone of a new account, for its first days.</p>
+<figure>
+  <img src="screenshots/profile-manager/pm-pin.png" alt="Profiles &rsaquo; Profile Default">
+  <figcaption>Profiles &rsaquo; Profile Default: what every new account starts with, the Activate pop-up and the Welcome screen.</figcaption>
+</figure>
+
+
+<h3 id="pm-files">6.4 File Manager: upload, archive, restore</h3>
+<ul>
+  <li><b>Upload:</b> 1) pick the <b>Account</b>, 2) one of its <b>Folders</b>, 3) drop the files or tap the box. Up to 100 MB a file (bigger ones from the Voice Renderer's File Manager); a file with the same name is replaced and phones swap their saved copy. Keep the page open until every file shows &#10003;.</li>
+  <li><b>Archive (R2 &rarr; Google Drive):</b> pick a <i>Rendered Songs</i> folder, tick songs (or <b>All shown</b>), <b>Move to Archive</b>. They go to <i>Archive &rsaquo; &lt;Profile&gt; - &lt;Folder&gt; &rsaquo; &lt;Song&gt;</i>; each file leaves R2 only after its Drive copy is safe. <b>Copy only</b> keeps them on R2 too. Profiles marked <i>(view only)</i> (e.g. Demo Version, Bundle) are never archived.</li>
+  <li><b>Restore (Google Drive &rarr; R2):</b> pick the R2 folder, tick the archived songs, <b>Move back to R2</b>. The Drive copy goes to Drive's Trash (30 days to get it back) unless <b>Copy only</b> is ticked.</li>
+  <li><b>Auto-archive:</b> tick <b>On</b>, set <b>Move songs older than N days</b> (1&ndash;3650), <b>Save</b>. Every 5 days it moves a few unchanged songs; <b>Check</b> shows what would go, <b>Run now</b> moves them now, <b>Recently moved</b> lists what went.</li>
+</ul>
+<figure>
+  <img src="screenshots/profile-manager/pm-upload.png" alt="File Manager &rsaquo; Upload">
+  <figcaption>File Manager &rsaquo; Upload: account, folder, then drop the files.</figcaption>
+</figure>
+<div class="note"><b>Watch out:</b> Archive and Restore use the Archive's Google sign-in, which is set up on the PC (Voice Renderer &rsaquo; File Manager &rsaquo; Archive). A song with more than about 20 files must be archived from the Voice Renderer.</div>
+
+<h3 id="pm-settings">6.5 Settings</h3>
+<table>
+  <tr><th style="width:22%">Page</th><th>Settings and what to know</th></tr>
+  <tr><td><b>Emails</b></td><td>Sign-up, First PIN, New PIN and Community code emails: subject, text, Preview (Laptop / Phone), Use the original text. Full steps in <a href="#task5">Task 5</a>.</td></tr>
+  <tr><td><b>App Themes</b></td><td><b>App theme</b> and <b>Community wall</b>: Dark, Light or Phone's setting. <b>SBE Community header colour</b> saves at once when tapped (no Save needed).</td></tr>
+  <tr><td><b>Devices</b></td><td><b>Devices per PIN</b> (0 = no limit); <b>Free a device not seen for N days</b> (0 = never); <b>Only phones and tablets count</b> (laptops use the PIN for free); <b>Must use the installed app</b> (a phone's browser tab gets an install screen instead); <b>No device limit for</b> chosen accounts. The count stays when the PIN changes.</td></tr>
+  <tr><td><b>Group Rehearsal</b></td><td><b>Group Rehearsal on</b>; <b>Default for accounts</b> (Video and audio, Audio only, Off) and per account; <b>Time limit per session</b>; <b>Members per session</b>. Each account has 4 rooms (Soprano, Alto, Tenor, Bass); nothing is recorded. Free up to 1,000 GB a month.</td></tr>
+  <tr><td><b>Spending guard</b></td><td><b>Guard on</b>; how often the storage size is checked; <b>warn at</b> / <b>pause at</b> % of the free monthly amount for R2 and for calls. Paused parts start again on the 1st. Keep it on so Cloudflare never charges the card.</td></tr>
+  <tr><td><b>Statistics</b></td><td>R2 storage and operations this month against the free amount (the black tick shows where the month will end), Group Rehearsal data, today's Workers limits (reset 8:00 AM Philippine time), operations per day, storage by folder, largest files, and <b>Who uses the most</b>. <b>Refresh</b> reloads.</td></tr>
+  <tr><td><b>Admin Access</b></td><td><b>Add login</b>; change a login's type (<b>Admin</b> = everything; <b>Regular</b> = only the ticked pages; the &#9881; sets the ticks a new Regular login starts with); <b>Reset to default password</b> or type a new one; 2FA: <b>Turn off</b>, <b>New phone</b>, <b>Require 2FA</b>, <b>Don't require</b>; <b>Delete login</b> (Regular only; its accounts stay). The last Admin can't be removed, and nobody can make their own login Regular.</td></tr>
+</table>
+<div class="grid2">
+<figure>
+  <img src="screenshots/profile-manager/pm-dev.png" alt="Settings &rsaquo; Devices.">
+  <figcaption>Settings &rsaquo; Devices.</figcaption>
+</figure>
+<figure>
+  <img src="screenshots/profile-manager/pm-guard.png" alt="Settings &rsaquo; Spending guard.">
+  <figcaption>Settings &rsaquo; Spending guard.</figcaption>
+</figure>
+<figure>
+  <img src="screenshots/profile-manager/pm-call.png" alt="Settings &rsaquo; Group Rehearsal.">
+  <figcaption>Settings &rsaquo; Group Rehearsal.</figcaption>
+</figure>
+<figure>
+  <img src="screenshots/profile-manager/pm-look.png" alt="Settings &rsaquo; App Themes.">
+  <figcaption>Settings &rsaquo; App Themes.</figcaption>
+</figure>
+</div>
+<figure>
+  <img src="screenshots/profile-manager/pm-admin.png" alt="Settings &rsaquo; Admin Access">
+  <figcaption>Settings &rsaquo; Admin Access: logins, their type and 2FA state. (<i>docshot</i> is the test login used for these pictures.)</figcaption>
+</figure>
+<div class="tip"><b>Good habits:</b> keep the Spending guard on; turn on Alerts on your phone; give helpers a Regular login with only what they need (e.g. Accounts and Upload) instead of sharing yours.</div>
+
+<!-- ================================================================ -->
+<h2 id="roles">7. Tasks involved</h2>
+<p>Getting one song from paper to the members' phones takes four tasks, done in this order. The table is the summary; each task's detailed workflow follows below. Task 5 runs beside Task 3: it is how new members sign up, get activated and receive their PINs by email.</p>
 <table>
   <tr><th style="width:26%">Task</th><th style="width:18%">Who</th><th style="width:20%">App</th><th>Result</th></tr>
   <tr><td><a href="#task1">Task 1. Scanning and editing</a></td><td>Ark2 encoder</td><td>gwenTone + Moshi</td><td>A correct MusicXML score (<code>.mxl</code>)</td></tr>
   <tr><td><a href="#task2">Task 2. Rendering</a></td><td>Ark2 encoder</td><td>Voice Renderer</td><td>Sung parts (<code>.ark2a</code>) and the protected score (<code>.ark2s</code>) on the Online Drive</td></tr>
   <tr><td><a href="#task3">Task 3. Accounts (Profile Manager)</a></td><td>Ark2 admin</td><td>Voice Renderer &rsaquo; Profile Manager</td><td>A PIN for the member, opening their folders</td></tr>
   <tr><td><a href="#task4">Task 4. Final output: Ark2 SBE</a></td><td>Every member</td><td>Ark2 Chorus SBE</td><td>Learning the part by ear, anywhere, even without the trainer</td></tr>
+  <tr><td><a href="#task5">Task 5. Emails</a></td><td>Ark2 admin (most emails go by themselves)</td><td>Profile Manager &rsaquo; Accounts / Settings &rsaquo; Emails</td><td>Members told how to activate, given their PIN, and sent a new one before it runs out</td></tr>
 </table>
 
 <!-- ---------------------------------------------------------------- -->
@@ -529,6 +700,7 @@ pick <b>Rendered</b> in the SBE player, while the notes move along with them.</p
   <div class="box"><b>Maintain</b>renew, edit, delete</div>
 </div>
 <p><b>Input:</b> a member or group asking for access. <b>Output:</b> a working PIN that opens the right folders in SBE.</p>
+<div class="note"><b>Two places do this.</b> The steps below use the Voice Renderer on the Ark2 PC, where changes need <b>Publish</b>. The web <a href="#pm">Profile Manager</a> does the same from any phone or browser, and its changes are live at once (no Publish): see <a href="#pm-profiles">6.3</a>. The PC picks up web changes the next time its Profile Manager tab opens.</div>
 <p><b>A. Create an account</b></p>
 <ol class="steps">
   <li><b>Open Profile Manager &rsaquo; Create</b> in the Voice Renderer.</li>
@@ -537,7 +709,7 @@ pick <b>Rendered</b> in the SBE player, while the notes move along with them.</p
   <li><b>Folders this PIN opens.</b> Tick the existing folders the account may see (e.g. Religious Songs, Ark2 Render). Under <b>Browse / Scan / device folders on</b>, tick the players where the member may browse: <b>Note Player</b>, <b>Audio Player</b>, <b>Music Sheet</b>.</li>
   <li><b>Own folders (optional).</b> Under <b>Will be written to config.ark2</b>, tick <b>Make folders</b> (Audio, Music Notes, Rendered, Sheet) to give the account its own folders, and where to keep them (<b>Save to Google Drive</b> / <b>Local folder</b>). These are the folders you choose in the Renderer's Output (Task 2) for this account's songs.</li>
   <li><b>Create.</b> Press <b>Create</b>. The current <code>config.ark2</code> is first backed up to <i>ark2 Config Backup</i>, then the account and PIN are written. Check the preview line before pressing it.</li>
-  <li><b>Publish.</b> Press <b>Publish</b> (it appears after Create). The config goes live in about a minute. Until you publish, phones do not know the new PIN. With <b>Email the PIN when published</b> ticked, the PIN is emailed to the account's address.</li>
+  <li><b>Publish.</b> Press <b>Publish</b> (it appears after Create). The config goes live in about a minute. Until you publish, phones do not know the new PIN. With <b>Email the PIN when published</b> ticked, the PIN is emailed to the account's address (the <a href="#task5">First PIN email</a>, Task 5).</li>
   <li><b>Test.</b> Open <code>https://ark2chorus.pages.dev/</code> (or <code>http://ark2.local/</code>), enter the new PIN, and check that only the intended folders show under <b>Online Drive &#9729;</b>.</li>
 </ol>
 <p><b>B. Manage existing accounts</b></p>
@@ -574,10 +746,74 @@ pick <b>Rendered</b> in the SBE player, while the notes move along with them.</p
 </ol>
 <div class="tip"><b>Done when:</b> the member can sing their part alone, at the original tempo, with the other voices playing.</div>
 
-<!-- ================================================================ -->
-<h2 id="next">7. SBE Community</h2>
+<!-- ---------------------------------------------------------------- -->
+<h3 id="task5">Task 5. Emails: sign-up, activation and PINs</h3>
+<div class="flow" style="font-size:12px">
+  <div class="box s"><b>Sign up</b>Create account in the app</div><div class="arrow">&#10140;</div>
+  <div class="box"><b>Sign-up email</b>how to activate, payment</div><div class="arrow">&#10140;</div>
+  <div class="box"><b>Payment</b>member replies with proof</div><div class="arrow">&#10140;</div>
+  <div class="box r"><b>Activate</b>Accounts &rsaquo; Pending</div><div class="arrow">&#10140;</div>
+  <div class="box"><b>First PIN email</b>PIN + expiry</div><div class="arrow">&#10140;</div>
+  <div class="box"><b>New PIN email</b>by itself, before expiry</div>
+</div>
+<p><b>Input:</b> a person who taps <b>Create account</b> on the app's PIN screen (or an account you create yourself). <b>Output:</b> the member has their PIN in their inbox, and gets a new one by itself before it runs out.</p>
 
-<h3 id="community">7.1 What it is and how to use it</h3>
+<p><b>A. The emails Ark2 sends</b></p>
+<table>
+  <tr><th style="width:20%">Email</th><th style="width:32%">Sent when</th><th style="width:20%">Goes to</th><th>Text edited in</th></tr>
+  <tr><td><b>1. Sign-up</b> (&ldquo;how to activate&rdquo;)</td><td>By itself, the moment someone sends <b>Create account</b> in the app. Explains Ark2 SBE, the one-time support, the modes of payment and how to activate.</td><td>The person; admins blind-copied</td><td>Profile Manager &rsaquo; Settings &rsaquo; Emails</td></tr>
+  <tr><td><b>2. First PIN</b></td><td>When you press <b>Activate</b> on a waiting sign-up, or <b>Create</b> / <b>Email the PIN</b> in New profile, while <b>Email the PIN</b> is ticked.</td><td>The addresses on the account; admins blind-copied</td><td>Settings &rsaquo; Emails</td></tr>
+  <tr><td><b>3. New PIN</b></td><td>Nobody presses anything: 5 days before a PIN runs out, Ark2 makes a new PIN and emails it.</td><td>The addresses on the account; admins blind-copied</td><td>Settings &rsaquo; Emails</td></tr>
+  <tr><td><b>4. Community code</b></td><td>Someone joins the SBE Community, only if <b>Email code to join</b> is on (Section 8).</td><td>The person joining</td><td>Settings &rsaquo; Emails</td></tr>
+  <tr><td><b>5. &ldquo;We got your request&rdquo;</b></td><td>A Request is sent from the app's Feedback (at most one per address a day).</td><td>The person</td><td>Fixed text in <code>tools/device-counter.gs</code></td></tr>
+  <tr><td><b>6. Two-step sign-in alert</b></td><td>A Profile Manager login turns on two-step sign-in from the website.</td><td>Admins only</td><td>Fixed text in <code>tools/device-counter.gs</code></td></tr>
+</table>
+<figure>
+  <img src="screenshots/profile-manager/pm-mails.png" alt="Settings &rsaquo; Emails">
+  <figcaption>Settings &rsaquo; Emails: tap an email to edit its subject and text.</figcaption>
+</figure>
+<p>All emails come from Ark2's Gmail account (through the Apps Script <code>tools/device-counter.gs</code>), with the Ark2 Chorus logo band on top. Admins are the accounts that never expire.</p>
+
+<p><b>B. Activate a new member</b></p>
+<ol class="steps">
+  <li><b>The sign-up arrives.</b> The person taps <b>Create account</b> on the app's PIN screen and types their name and email. They get the <b>Sign-up email</b> at once, and you get a blind copy.</li>
+  <li><b>Wait for the payment.</b> The member replies to the email with a screenshot of the GCash / PayPal payment, or arranges cash on hand. Confirm the payment before going on.</li>
+  <li><b>Open Accounts.</b> In the web <a href="#pm">Profile Manager</a>, open <b>Profiles &rsaquo; Accounts</b>. Waiting sign-ups are at the top under <b>Pending activation</b>.</li>
+  <li><b>Activate.</b> Press <b>Activate</b> on the person. In the pop-up, check the name, the PIN, the expiry and the folders (filled in from <b>Profiles &rsaquo; Profile Default</b>), keep <b>Email the PIN</b> ticked, and press <b>Activate</b>. The account is saved online and works on phones at once.</li>
+  <li><b>Check it was sent.</b> The line above the Accounts list says <i>Activated: &hellip; PIN emailed to &hellip;</i>, and you get a blind copy. If it says the PIN couldn't be emailed, the account still works: fix the cause (part D), then reply to the member's sign-up email with the PIN, since there is no resend button after Activate.</li>
+  <li><b>Not paying or not real?</b> Press <b>Dismiss</b>: no account is made and no email is sent. A request not activated within the days set in <b>Profiles &rsaquo; Sign-up</b> (3 by default) leaves the list by itself, and that phone and address may sign up again.</li>
+</ol>
+<div class="note"><b>Watch out:</b> one sign-up per phone and one per email address, for good. Activate or Dismiss doesn't reset it, so someone who typed a wrong address must contact you, and you create the account yourself in New profile (Task 3).</div>
+
+<p><b>C. Change the text of an email</b></p>
+<ol class="steps">
+  <li><b>Open Settings &rsaquo; Emails</b> in the web Profile Manager and tap the email's name (Sign-up, First PIN, New PIN, Community code).</li>
+  <li><b>Edit the Subject and Text.</b> Keep the placeholders in braces; Ark2 fills them in: <code>{name}</code>, <code>{pin}</code>, <code>{until}</code>, <code>{code}</code>, <code>{account}</code>, <code>{devices}</code>, <code>{days}</code>. The PIN and Community emails can't be saved without <code>{pin}</code> / <code>{code}</code>.</li>
+  <li><b>Format.</b> <code>**words**</code> = bold, a line in CAPITALS = a gold heading, a blank line = a new paragraph, lines starting with spaces = an indented list. Web and email addresses become links.</li>
+  <li><b>Preview.</b> Press <b>Preview</b> and check both <b>Laptop</b> and <b>Phone</b>: it shows the email with sample details, including the logo band.</li>
+  <li><b>Save.</b> Press <b>Save</b> at the bottom. The next email uses the new text; no app update or script deploy is needed. <b>Use the original text</b> brings back the default.</li>
+</ol>
+<figure>
+  <img src="screenshots/profile-manager/pm-mail-preview.png" alt="Preview of the Sign-up email with sample details (Juan Dela Cruz), as it looks in the inbox with the logo band.">
+  <figcaption>Preview of the Sign-up email with sample details (Juan Dela Cruz), as it looks in the inbox with the logo band.</figcaption>
+</figure>
+
+
+<p><b>D. Setup and when emails don't arrive</b></p>
+<ul>
+  <li><b>Check Spam first.</b> Ask the member to look in Spam / Promotions and mark the email &ldquo;Not spam&rdquo;.</li>
+  <li><b>Daily limit.</b> Ark2's Gmail sends about 100 emails a day. Sign-ups have their own limits (<b>Profiles &rsaquo; Sign-up</b>) so they never use up what the PIN emails need; keep &ldquo;A day in all&rdquo; well below 100.</li>
+  <li><b>New PIN email failed.</b> Nobody is locked out: with no email sent, the PIN doesn't switch, and Ark2 tries again the next day.</li>
+  <li><b>Logo broken in the email.</b> The logo comes from <code>https://ark2chorus.pages.dev/icons/mail-logo.png</code>. After changing <code>icons/mail-logo.png</code>, run <code>git publish</code> (it commits for you) and open that address: it must show the picture, not the app. Only then send emails.</li>
+  <li><b>After changing <code>tools/device-counter.gs</code>:</b> paste it into the Apps Script editor, then <b>Deploy &rsaquo; Manage deployments &rsaquo; edit (pencil) &rsaquo; Version: New version &rsaquo; Deploy</b>. The URL stays the same. The text of emails 1&ndash;4 lives in Settings, not here.</li>
+  <li><b>First-time setup:</b> the script's URL is the <code>Devices -</code> line in <code>config.ark2</code>; the Script property <code>MAIL_KEY</code> must equal the Worker's secret <code>MAIL_KEY</code>; run <code>authorizeMail</code> once in the Apps Script editor to allow sending.</li>
+</ul>
+<div class="tip"><b>Done when:</b> the member has the First PIN email in their inbox (logo showing), the PIN unlocks SBE, and you received the blind copy.</div>
+
+<!-- ================================================================ -->
+<h2 id="next">8. SBE Community</h2>
+
+<h3 id="community">8.1 What it is and how to use it</h3>
 <p><b>SBE Community</b> is a shared wall inside the Ark2 Chorus SBE app where members post photos and short videos from practices,
 programs and church events, and like, reply to and follow each other. It is opened from the logo menu &rsaquo; <b>SBE Community</b>,
 and only shows there while an admin has it turned on.</p>
@@ -592,7 +828,7 @@ and only shows there while an admin has it turned on.</p>
 </ol>
 <div class="note">A post or reply flagged by the automatic check shows <i>&ldquo;waiting for a moderator&rdquo;</i>: only you can see it until a moderator approves it. When your PIN expires, the Community closes too, until you enter your new PIN.</div>
 
-<p><b>For admins: settings and moderation</b> (Ark2 Profile Manager &rsaquo; <b>Community</b> tab, admin only)</p>
+<p><b>For admins: settings and moderation</b> (web <a href="#pm">Profile Manager</a> &rsaquo; <b>SBE Community &rsaquo; Community settings</b> and <b>Posts &amp; review</b>; Admin logins only)</p>
 <table>
   <tr><th style="width:30%">Setting</th><th>What it does</th></tr>
   <tr><td><b>Community on</b></td><td>Shows or hides SBE Community in every member's menu.</td></tr>
@@ -601,15 +837,23 @@ and only shows there while an admin has it turned on.</p>
   <tr><td><b>App opens first</b></td><td>Open the app on the Home screen (current) or straight on the Community wall.</td></tr>
   <tr><td><b>Location when joining</b></td><td>Ask (denying still joins), Required, or Don't ask.</td></tr>
   <tr><td><b>Limits</b></td><td>Posts a day per member, videos a day per member, video length in seconds, and the most members allowed.</td></tr>
+  <tr><td><b>Accounts</b></td><td>Which accounts' phones get SBE Community in the menu. A hidden account keeps its members and posts.</td></tr>
+  <tr><td><b>Turn on picture checks</b></td><td>Lets the AI check pictures too; it asks once to accept Meta's Llama 3.2 licence.</td></tr>
 </table>
+<p>Changes count only after <b>Save</b>. Tap any dotted name on the page to see what it does.</p>
+<figure>
+  <img src="screenshots/profile-manager/pm-cmset.png" alt="SBE Community &rsaquo; Community settings, with the Accounts that see the Community.">
+  <figcaption>SBE Community &rsaquo; Community settings, with the Accounts that see the Community.</figcaption>
+</figure>
+
 <ul>
   <li><b>Needs a look</b>: posts and replies waiting for a moderator; approve or remove them. <b>Newest posts</b> and <b>Replies</b> show everything recent.</li>
   <li><b>Members</b>: name, email, account, location, date joined and number of posts. <b>Mute</b> (can look and like, but not post or reply), <b>Ban</b> (can't open the Community; that email can't join again) or <b>Erase</b> (deletes the member and everything they posted, for a request to remove someone's data).</li>
-  <li>The usage page shows how much of the free online storage and database the Community uses.</li>
+  <li><b>Settings &rsaquo; Statistics</b> shows how much of the free online storage the Community uses. Moderators with <b>Alerts</b> on get a phone alert for held posts, reports, videos and new members.</li>
 </ul>
 
 <!-- ================================================================ -->
-<h2 id="glossary">8. Glossary</h2>
+<h2 id="glossary">9. Glossary</h2>
 <table>
   <tr><th style="width:24%">Term</th><th>Meaning</th></tr>
   <tr><td>MusicXML (<code>.musicxml</code>, <code>.mxl</code>)</td><td>The standard file for written music; it holds the notes, parts and lyrics.</td></tr>
@@ -620,6 +864,10 @@ and only shows there while an admin has it turned on.</p>
   <tr><td><code>.ark2s</code> / <code>.ark2a</code></td><td>Protected score / protected audio that only the Ark2 app can open.</td></tr>
   <tr><td>Online Drive (R2 / Google Drive)</td><td>Where songs are stored online; each account's PIN opens its own folders.</td></tr>
   <tr><td>PIN</td><td>A member's key to the SBE app; it can expire and decides which folders are visible.</td></tr>
+  <tr><td>Profile Manager (web)</td><td>The admin website <code>ark2sbe-profile.pages.dev</code>: accounts, uploads, archive, Community and settings, live at once.</td></tr>
+  <tr><td>Admin / Regular login</td><td>The two kinds of Profile Manager sign-in: Admin sees everything; Regular sees only the pages ticked for it.</td></tr>
+  <tr><td>Spending guard</td><td>Pauses R2 or calls before the free monthly amount runs out, so Cloudflare never charges.</td></tr>
+  <tr><td>Pending activation</td><td>A sign-up from the app waiting in Accounts until the admin presses Activate (Task 5).</td></tr>
   <tr><td>Kaggle GPU</td><td>A free online graphics card used to render the heavier voices quickly.</td></tr>
   <tr><td>SBE Community</td><td>The members' shared photo and video wall inside the SBE app.</td></tr>
   <tr><td>Moshi</td><td>The helper inside gwenTone that explains and fixes wrong measures.</td></tr>
